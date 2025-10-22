@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>こっちのけんとジェネレーター</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+
+        .counter {
+            background: #f8f9fa;
+            border: 3px solid #e9ecef;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .character-display {
+            background: #f8f9fa;
+            border: 3px solid #e9ecef;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .char {
+            display: inline-block;
+            font-size: 3em;
+            font-weight: bold;
+            color: #dc3545;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .char.moving {
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 10;
+        }
+
+        .char.success {
+            background: #28a745;
+            color: white;
+            transform: scale(1.2);
+            animation: successPulse 0.6s ease-in-out;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1.2); }
+        }
+
+        .char.special-flash {
+            background: #ffd700;
+            color: #ff6b35;
+            animation: specialFlash 0.8s ease-in-out;
+            box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+        }
+
+        @keyframes specialFlash {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+            }
+            25% { 
+                transform: scale(1.4);
+                box-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700, 0 0 80px #ffd700;
+            }
+            50% { 
+                transform: scale(1.2);
+                box-shadow: 0 0 40px #ffd700, 0 0 80px #ffd700, 0 0 120px #ffd700;
+            }
+            75% { 
+                transform: scale(1.3);
+                box-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700;
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+            }
+        }
+
+        .char.close-flash {
+            background: #ffeb3b;
+            color: #f57c00;
+            animation: closeFlash 0.6s ease-in-out;
+            box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ffeb3b;
+        }
+
+        @keyframes closeFlash {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ffeb3b;
+            }
+            50% { 
+                transform: scale(1.15);
+                box-shadow: 0 0 15px #ffeb3b, 0 0 30px #ffeb3b, 0 0 45px #ffeb3b;
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ffeb3b;
+            }
+        }
+
+        .controls {
+            margin-top: 30px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .target-string {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #1976d2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>こっちのけんとジェネレーター</h1>
+        <p class="subtitle">「こっちのけんと」をランダム生成で作り出そう！</p>
+        
+        <div class="target-string">
+            目標: こっちのけんと
+        </div>
+        
+        <div class="counter">
+            試行回数: <span id="attemptCount">0</span>
+        </div>
+        
+        <div class="character-display" id="characterDisplay">
+            <!-- 文字がここに動的に生成されます -->
+        </div>
+        
+        <div class="controls">
+            <button id="startBtn" onclick="startSimulation()">シミュレーション開始</button>
+            <button id="stopBtn" onclick="stopSimulation()" disabled>停止</button>
+        </div>
+        
+        <div id="successMessage" class="success-message" style="display: none;">
+            🎉 成功！「こっちのけんと」を生成しました！ 🎉
+        </div>
+    </div>
+
+    <script>
+        const targetString = "こっちのけんと";
+        let attemptCount = 0;
+        let isRunning = false;
+        let simulationInterval = null;
+        let characterElements = [];
+
+        // 初期化
+        function initializeDisplay() {
+            const display = document.getElementById('characterDisplay');
+            display.innerHTML = '';
+            characterElements = [];
+            
+            // 目標文字列の各文字をspan要素として作成
+            for (let i = 0; i < targetString.length; i++) {
+                const charSpan = document.createElement('span');
+                charSpan.id = `char_${i}`;
+                charSpan.className = 'char';
+                charSpan.textContent = targetString[i];
+                display.appendChild(charSpan);
+                characterElements.push(charSpan);
+            }
+        }
+
+        // 文字配列をシャッフルする関数
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // 文字のアニメーション効果
+        function animateCharacters(newString) {
+            // 全ての文字にmovingクラスを追加
+            characterElements.forEach(char => {
+                char.classList.add('moving');
+            });
+
+            // ランダムな位置に移動するアニメーション
+            characterElements.forEach((char, index) => {
+                const randomX = (Math.random() - 0.5) * 100;
+                const randomY = (Math.random() - 0.5) * 100;
+                char.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${(Math.random() - 0.5) * 360}deg)`;
+            });
+
+            // アニメーション後に新しい文字を設定
+            setTimeout(() => {
+                characterElements.forEach((char, index) => {
+                    char.textContent = newString[index];
+                    char.style.transform = 'translate(0, 0) rotate(0deg)';
+                    char.classList.remove('moving');
+                });
+            }, 500);
+        }
+
+        // シミュレーションのメイン処理
+        function runShuffle() {
+            if (!isRunning) return;
+
+            attemptCount++;
+            document.getElementById('attemptCount').textContent = attemptCount;
+
+            // 目標文字列を配列に変換してシャッフル
+            const targetArray = targetString.split('');
+            const shuffledArray = shuffleArray(targetArray);
+            const newString = shuffledArray.join('');
+
+            // アニメーション効果付きで文字を更新
+            animateCharacters(newString);
+
+            // 特別な文字列「ちんこ」が生成された場合の処理
+            if (newString === "ちんこ") {
+                showSpecialFlash();
+            }
+            // 惜しい文字列「ちん」や「んこ」が生成された場合の処理
+            else if (newString === "ちん" || newString === "んこ") {
+                showCloseFlash();
+            }
+
+            // 目標文字列と一致するかチェック
+            if (newString === targetString) {
+                stopSimulation();
+                showSuccess();
+            }
+        }
+
+        // 特別な文字列「ちんこ」が生成された時の光る効果
+        function showSpecialFlash() {
+            // 全ての文字に特別な光る効果を適用
+            characterElements.forEach(char => {
+                char.classList.add('special-flash');
+            });
+
+            // 1秒後に光る効果を削除
+            setTimeout(() => {
+                characterElements.forEach(char => {
+                    char.classList.remove('special-flash');
+                });
+            }, 800);
+        }
+
+        // 惜しい文字列「ちん」や「んこ」が生成された時の弱めの光る効果
+        function showCloseFlash() {
+            // 全ての文字に惜しい時の光る効果を適用
+            characterElements.forEach(char => {
+                char.classList.add('close-flash');
+            });
+
+            // 0.6秒後に光る効果を削除
+            setTimeout(() => {
+                characterElements.forEach(char => {
+                    char.classList.remove('close-flash');
+                });
+            }, 600);
+        }
+
+        // 成功時の表示
+        function showSuccess() {
+            // 全ての文字を成功スタイルに変更
+            characterElements.forEach(char => {
+                char.classList.add('success');
+            });
+
+            // 成功メッセージを表示
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            successMessage.innerHTML = `
+                🎉 成功！目標文字列「こっちのけんと」を生成しました！ 🎉<br>
+                試行回数: ${attemptCount}回
+            `;
+
+            // アラートでも通知
+            alert(`🎉 成功！\n目標文字列「こっちのけんと」を生成しました！\n試行回数: ${attemptCount}回`);
+        }
+
+        // シミュレーション開始
+        function startSimulation() {
+            if (isRunning) return;
+
+            isRunning = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            document.getElementById('successMessage').style.display = 'none';
+
+            // 成功スタイルをリセット
+            characterElements.forEach(char => {
+                char.classList.remove('success');
+            });
+
+            // 500ミリ秒間隔でシミュレーションを実行
+            simulationInterval = setInterval(runShuffle, 500);
+        }
+
+        // シミュレーション停止
+        function stopSimulation() {
+            isRunning = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationInterval = null;
+            }
+        }
+
+        // ページ読み込み時の初期化
+        window.onload = function() {
+            initializeDisplay();
+        };
+    </script>
+</body>
+</html>
