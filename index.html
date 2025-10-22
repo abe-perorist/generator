@@ -386,6 +386,12 @@
             const wasRunning = isRunning;
             isRunning = false;
             
+            // 既存のタイマーをクリア
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationInterval = null;
+            }
+            
             // 全ての文字に特別な光る効果を適用
             characterElements.forEach(char => {
                 char.classList.add('special-flash');
@@ -410,6 +416,12 @@
             // シミュレーションを一時停止
             const wasRunning = isRunning;
             isRunning = false;
+            
+            // 既存のタイマーをクリア
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationInterval = null;
+            }
             
             // 全ての文字に惜しい時の光る効果を適用
             characterElements.forEach(char => {
