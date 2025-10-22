@@ -297,6 +297,7 @@
         let isRunning = false;
         let simulationInterval = null;
         let characterElements = [];
+        let isFirstRun = true;
 
         // 初期化
         function initializeDisplay() {
@@ -351,6 +352,15 @@
             }, 500);
         }
 
+        // 静かに文字を更新する関数（アニメーションなし）
+        function updateCharactersQuietly(newString) {
+            characterElements.forEach((char, index) => {
+                char.textContent = newString[index];
+                // 強調効果のクラスもクリア
+                char.classList.remove('special-flash', 'close-flash');
+            });
+        }
+
         // シミュレーションのメイン処理
         function runShuffle() {
             if (!isRunning) return;
@@ -363,10 +373,17 @@
             const shuffledArray = shuffleArray(targetArray);
             const newString = shuffledArray.join('');
 
-            // アニメーション効果付きで文字を更新
-            animateCharacters(newString);
+            // 最初の実行時のみアニメーション効果付きで文字を更新
+            if (isFirstRun) {
+                animateCharacters(newString);
+                isFirstRun = false;
+            } else {
+                // 2回目以降は静かに文字を更新
+                updateCharactersQuietly(newString);
+            }
 
-            // アニメーション完了後に判定を実行（500ms後）
+            // 判定を実行（最初の実行時は500ms後、それ以降は即座に）
+            const delay = isFirstRun ? 500 : 0;
             setTimeout(() => {
                 // 特別な文字列「ちんこ」が生成された場合の処理（部分文字列マッチ）
                 if (newString.includes("ちんこ")) {
@@ -376,7 +393,7 @@
                 else if (newString.includes("ちん") || newString.includes("んこ")) {
                     showCloseFlash();
                 }
-            }, 500);
+            }, delay);
 
             // 目標文字列と一致するかチェック
             if (newString === targetString) {
@@ -499,6 +516,9 @@
             characterElements.forEach(char => {
                 char.classList.remove('success', 'special-flash', 'close-flash');
             });
+
+            // 最初の実行フラグをリセット
+            isFirstRun = true;
 
             // 500ミリ秒間隔でシミュレーションを実行
             simulationInterval = setInterval(runShuffle, 500);
