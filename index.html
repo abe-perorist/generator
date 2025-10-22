@@ -345,6 +345,8 @@
                     char.textContent = newString[index];
                     char.style.transform = 'translate(0, 0) rotate(0deg)';
                     char.classList.remove('moving');
+                    // 強調効果のクラスもクリア
+                    char.classList.remove('special-flash', 'close-flash');
                 });
             }, 500);
         }
@@ -493,9 +495,9 @@
             document.getElementById('stopBtn').disabled = false;
             document.getElementById('successMessage').style.display = 'none';
 
-            // 成功スタイルをリセット
+            // 成功スタイルと強調効果をリセット
             characterElements.forEach(char => {
-                char.classList.remove('success');
+                char.classList.remove('success', 'special-flash', 'close-flash');
             });
 
             // 500ミリ秒間隔でシミュレーションを実行
