@@ -98,54 +98,106 @@
         }
 
         .char.special-flash {
-            background: #ffd700;
-            color: #ff6b35;
-            animation: specialFlash 0.8s ease-in-out;
-            box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            color: #d32f2f;
+            animation: specialFlash 1.5s ease-in-out;
+            box-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700, 0 0 90px #ffd700;
+            border: 4px solid #ff6b35;
+            position: relative;
+        }
+
+        .char.special-flash::before {
+            content: '🎉';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5em;
+            animation: confetti 1.5s ease-in-out;
         }
 
         @keyframes specialFlash {
             0% { 
-                transform: scale(1);
-                box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+                transform: scale(1) rotate(0deg);
+                box-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700, 0 0 90px #ffd700;
             }
-            25% { 
-                transform: scale(1.4);
-                box-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700, 0 0 80px #ffd700;
-            }
-            50% { 
-                transform: scale(1.2);
+            15% { 
+                transform: scale(1.5) rotate(5deg);
                 box-shadow: 0 0 40px #ffd700, 0 0 80px #ffd700, 0 0 120px #ffd700;
             }
+            30% { 
+                transform: scale(1.2) rotate(-3deg);
+                box-shadow: 0 0 50px #ffd700, 0 0 100px #ffd700, 0 0 150px #ffd700;
+            }
+            45% { 
+                transform: scale(1.6) rotate(8deg);
+                box-shadow: 0 0 60px #ffd700, 0 0 120px #ffd700, 0 0 180px #ffd700;
+            }
+            60% { 
+                transform: scale(1.3) rotate(-5deg);
+                box-shadow: 0 0 50px #ffd700, 0 0 100px #ffd700, 0 0 150px #ffd700;
+            }
             75% { 
-                transform: scale(1.3);
-                box-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700;
+                transform: scale(1.4) rotate(3deg);
+                box-shadow: 0 0 40px #ffd700, 0 0 80px #ffd700, 0 0 120px #ffd700;
             }
             100% { 
-                transform: scale(1);
-                box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+                transform: scale(1) rotate(0deg);
+                box-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700, 0 0 90px #ffd700;
+            }
+        }
+
+        @keyframes confetti {
+            0% { 
+                transform: translateX(-50%) translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            20% { 
+                transform: translateX(-50%) translateY(-10px) rotate(180deg);
+                opacity: 1;
+            }
+            80% { 
+                transform: translateX(-50%) translateY(-20px) rotate(360deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateX(-50%) translateY(-30px) rotate(540deg);
+                opacity: 0;
             }
         }
 
         .char.close-flash {
-            background: #ffeb3b;
-            color: #f57c00;
-            animation: closeFlash 0.6s ease-in-out;
-            box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ffeb3b;
+            background: #ff9800;
+            color: #fff;
+            animation: closeFlash 1.2s ease-in-out;
+            box-shadow: 0 0 20px #ff9800, 0 0 40px #ff9800, 0 0 60px #ff9800;
+            border: 3px solid #ff5722;
         }
 
         @keyframes closeFlash {
             0% { 
                 transform: scale(1);
-                box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ffeb3b;
+                box-shadow: 0 0 20px #ff9800, 0 0 40px #ff9800, 0 0 60px #ff9800;
             }
-            50% { 
-                transform: scale(1.15);
-                box-shadow: 0 0 15px #ffeb3b, 0 0 30px #ffeb3b, 0 0 45px #ffeb3b;
+            20% { 
+                transform: scale(1.3);
+                box-shadow: 0 0 30px #ff9800, 0 0 60px #ff9800, 0 0 90px #ff9800;
+            }
+            40% { 
+                transform: scale(1.2);
+                box-shadow: 0 0 40px #ff9800, 0 0 80px #ff9800, 0 0 120px #ff9800;
+            }
+            60% { 
+                transform: scale(1.4);
+                box-shadow: 0 0 50px #ff9800, 0 0 100px #ff9800, 0 0 150px #ff9800;
+            }
+            80% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 30px #ff9800, 0 0 60px #ff9800, 0 0 90px #ff9800;
             }
             100% { 
                 transform: scale(1);
-                box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ffeb3b;
+                box-shadow: 0 0 20px #ff9800, 0 0 40px #ff9800, 0 0 60px #ff9800;
             }
         }
 
@@ -330,32 +382,52 @@
 
         // 特別な文字列「ちんこ」が生成された時の光る効果
         function showSpecialFlash() {
+            // シミュレーションを一時停止
+            const wasRunning = isRunning;
+            isRunning = false;
+            
             // 全ての文字に特別な光る効果を適用
             characterElements.forEach(char => {
                 char.classList.add('special-flash');
             });
 
-            // 1秒後に光る効果を削除
+            // 1.5秒後に光る効果を削除し、シミュレーションを再開
             setTimeout(() => {
                 characterElements.forEach(char => {
                     char.classList.remove('special-flash');
                 });
-            }, 800);
+                
+                // 元々動いていた場合は再開
+                if (wasRunning) {
+                    isRunning = true;
+                    simulationInterval = setInterval(runShuffle, 500);
+                }
+            }, 1500);
         }
 
         // 惜しい文字列「ちん」や「んこ」が生成された時の弱めの光る効果
         function showCloseFlash() {
+            // シミュレーションを一時停止
+            const wasRunning = isRunning;
+            isRunning = false;
+            
             // 全ての文字に惜しい時の光る効果を適用
             characterElements.forEach(char => {
                 char.classList.add('close-flash');
             });
 
-            // 0.6秒後に光る効果を削除
+            // 1.2秒後に光る効果を削除し、シミュレーションを再開
             setTimeout(() => {
                 characterElements.forEach(char => {
                     char.classList.remove('close-flash');
                 });
-            }, 600);
+                
+                // 元々動いていた場合は再開
+                if (wasRunning) {
+                    isRunning = true;
+                    simulationInterval = setInterval(runShuffle, 500);
+                }
+            }, 1200);
         }
 
         // 成功時の表示
