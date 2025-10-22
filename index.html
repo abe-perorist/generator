@@ -392,10 +392,16 @@
                 simulationInterval = null;
             }
             
-            // 全ての文字に特別な光る効果を適用
-            characterElements.forEach(char => {
-                char.classList.add('special-flash');
-            });
+            // 現在の文字列を取得
+            const currentString = characterElements.map(char => char.textContent).join('');
+            const targetIndex = currentString.indexOf("ちんこ");
+            
+            // 「ちんこ」の部分のみに特別な光る効果を適用
+            if (targetIndex !== -1) {
+                for (let i = 0; i < 3; i++) {
+                    characterElements[targetIndex + i].classList.add('special-flash');
+                }
+            }
 
             // 1.5秒後に光る効果を削除し、シミュレーションを再開
             setTimeout(() => {
@@ -423,10 +429,24 @@
                 simulationInterval = null;
             }
             
-            // 全ての文字に惜しい時の光る効果を適用
-            characterElements.forEach(char => {
-                char.classList.add('close-flash');
-            });
+            // 現在の文字列を取得
+            const currentString = characterElements.map(char => char.textContent).join('');
+            
+            // 「ちん」の部分を探して強調
+            let chinIndex = currentString.indexOf("ちん");
+            if (chinIndex !== -1) {
+                for (let i = 0; i < 2; i++) {
+                    characterElements[chinIndex + i].classList.add('close-flash');
+                }
+            }
+            
+            // 「んこ」の部分を探して強調
+            let nkoIndex = currentString.indexOf("んこ");
+            if (nkoIndex !== -1) {
+                for (let i = 0; i < 2; i++) {
+                    characterElements[nkoIndex + i].classList.add('close-flash');
+                }
+            }
 
             // 1.2秒後に光る効果を削除し、シミュレーションを再開
             setTimeout(() => {
