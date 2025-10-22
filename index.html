@@ -404,9 +404,8 @@
 
         // 特別な文字列「ちんこ」が生成された時の光る効果
         function showSpecialFlash() {
-            // シミュレーションを一時停止
+            // シミュレーションを一時停止（isRunningは変更しない）
             const wasRunning = isRunning;
-            isRunning = false;
             
             // 既存のタイマーをクリア
             if (simulationInterval) {
@@ -441,9 +440,8 @@
 
         // 惜しい文字列「ちん」や「んこ」が生成された時の弱めの光る効果
         function showCloseFlash() {
-            // シミュレーションを一時停止
+            // シミュレーションを一時停止（isRunningは変更しない）
             const wasRunning = isRunning;
-            isRunning = false;
             
             // 既存のタイマーをクリア
             if (simulationInterval) {
@@ -530,10 +528,16 @@
             document.getElementById('startBtn').disabled = false;
             document.getElementById('stopBtn').disabled = true;
 
+            // 強制的にタイマーをクリア
             if (simulationInterval) {
                 clearInterval(simulationInterval);
                 simulationInterval = null;
             }
+            
+            // 強調効果もクリア
+            characterElements.forEach(char => {
+                char.classList.remove('special-flash', 'close-flash', 'success');
+            });
         }
 
         // ページ読み込み時の初期化
