@@ -364,12 +364,12 @@
             // アニメーション効果付きで文字を更新
             animateCharacters(newString);
 
-            // 特別な文字列「ちんこ」が生成された場合の処理
-            if (newString === "ちんこ") {
+            // 特別な文字列「ちんこ」が生成された場合の処理（部分文字列マッチ）
+            if (newString.includes("ちんこ")) {
                 showSpecialFlash();
             }
-            // 惜しい文字列「ちん」や「んこ」が生成された場合の処理
-            else if (newString === "ちん" || newString === "んこ") {
+            // 惜しい文字列「ちん」や「んこ」が生成された場合の処理（部分文字列マッチ）
+            else if (newString.includes("ちん") || newString.includes("んこ")) {
                 showCloseFlash();
             }
 
