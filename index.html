@@ -365,14 +365,14 @@
 
         .score-popup {
             position: fixed;
-            top: 30%;
+            top: 15%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: #000;
             color: #ff00ff;
-            font-size: 4em;
+            font-size: 3.5em;
             font-weight: bold;
-            padding: 20px 40px;
+            padding: 15px 30px;
             border: 3px solid #ff00ff;
             box-shadow: 
                 0 0 40px #ff00ff,
@@ -382,6 +382,49 @@
             pointer-events: none;
             text-shadow: 0 0 20px #ff00ff;
             font-family: 'Orbitron', monospace;
+        }
+
+        /* 得点表示の近くに表示するポップアップ */
+        .score-popup-near {
+            position: absolute;
+            top: -60px;
+            right: -20px;
+            background: #000;
+            color: #ff00ff;
+            font-size: 2.5em;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #ff00ff;
+            box-shadow: 
+                0 0 30px #ff00ff,
+                inset 0 0 30px rgba(255, 0, 255, 0.3);
+            z-index: 1000;
+            animation: scorePopupNear 2s ease-out forwards;
+            pointer-events: none;
+            text-shadow: 0 0 15px #ff00ff;
+            font-family: 'Orbitron', monospace;
+        }
+
+        @keyframes scorePopupNear {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) translateY(20px);
+            }
+            20% {
+                opacity: 1;
+                transform: scale(1.2) translateY(-10px);
+            }
+            40% {
+                transform: scale(1) translateY(0);
+            }
+            80% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.8) translateY(-20px);
+            }
         }
 
         @keyframes scorePopup {
@@ -662,10 +705,16 @@
 
         // 得点ポップアップを表示する関数
         function showScorePopup(points) {
+            // 得点表示の近くにポップアップを表示
+            const scoreElement = document.getElementById('score');
             const popup = document.createElement('div');
-            popup.className = 'score-popup';
+            popup.className = 'score-popup-near';
             popup.textContent = `+${points}点！`;
-            document.body.appendChild(popup);
+            
+            // 得点表示の親要素に相対的に配置
+            const counterElement = scoreElement.parentElement;
+            counterElement.style.position = 'relative';
+            counterElement.appendChild(popup);
             
             // 2秒後にポップアップを削除
             setTimeout(() => {
