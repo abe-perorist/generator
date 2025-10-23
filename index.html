@@ -112,9 +112,9 @@
             background: #000;
             border: 2px solid #ff00ff;
             border-radius: 0;
-            padding: 6px;
+            padding: 8px;
             margin-bottom: 5px;
-            font-size: 1em;
+            font-size: 0.95em;
             font-weight: bold;
             color: #ff00ff;
             text-shadow: 0 0 10px #ff00ff;
@@ -124,11 +124,18 @@
             position: relative;
             overflow: hidden;
             text-align: center;
-            line-height: 1.6;
+            line-height: 1.8;
         }
 
         .achievement-display div {
-            margin: 2px 0;
+            margin: 3px 0;
+        }
+
+        .achievement-label {
+            color: #00ffff;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px #00ffff;
         }
 
         .counter::before {
@@ -635,8 +642,9 @@
         </div>
         
         <div class="achievement-display" id="achievementDisplay">
-            <div id="closeAchievement">？？ / ？？　2点</div>
-            <div id="specialAchievement">？？？　5点</div>
+            <div class="achievement-label">🎰 役と配当 🎰</div>
+            <div id="closeAchievement">？？ / ？？ → 2点</div>
+            <div id="specialAchievement">？？？ → 5点</div>
         </div>
         
         <div class="character-display" id="characterDisplay">
@@ -727,44 +735,16 @@
         }
 
         // 得点を加算する関数
-        function addScore(points, showPopup = false) {
+        function addScore(points) {
             score += points;
             document.getElementById('score').textContent = score;
             
-            // 得点表示の強調効果（基本得点のみ）
-            if (!showPopup) {
-                const scoreElement = document.getElementById('score');
-                scoreElement.classList.add('score-highlight');
-                setTimeout(() => {
-                    scoreElement.classList.remove('score-highlight');
-                }, 800);
-            }
-            
-            // ポップアップ表示（ボーナス得点の場合）
-            if (showPopup) {
-                showScorePopup(points);
-            }
-        }
-
-        // 得点ポップアップを表示する関数
-        function showScorePopup(points) {
-            // 得点表示の近くにポップアップを表示
+            // 得点表示の強調効果
             const scoreElement = document.getElementById('score');
-            const popup = document.createElement('div');
-            popup.className = 'score-popup-near';
-            popup.textContent = `+${points}点！`;
-            
-            // 得点表示の親要素に相対的に配置
-            const counterElement = scoreElement.parentElement;
-            counterElement.style.position = 'relative';
-            counterElement.appendChild(popup);
-            
-            // 2秒後にポップアップを削除
+            scoreElement.classList.add('score-highlight');
             setTimeout(() => {
-                if (popup.parentNode) {
-                    popup.parentNode.removeChild(popup);
-                }
-            }, 2000);
+                scoreElement.classList.remove('score-highlight');
+            }, 800);
         }
 
         // 達成状態を更新する関数
@@ -775,19 +755,19 @@
             // 「ちんこ」達成時
             if (hasChinko) {
                 closeAchievement.style.display = 'none';
-                specialAchievement.textContent = 'ちんこ　5点';
+                specialAchievement.textContent = 'ちんこ → 5点';
             }
             // 「ちん」と「んこ」両方達成時
             else if (hasChin && hasNko) {
-                closeAchievement.textContent = 'ちん / んこ　2点';
+                closeAchievement.textContent = 'ちん / んこ → 2点';
             }
             // 「ちん」のみ達成時
             else if (hasChin) {
-                closeAchievement.textContent = 'ちん / ？？　2点';
+                closeAchievement.textContent = 'ちん / ？？ → 2点';
             }
             // 「んこ」のみ達成時
             else if (hasNko) {
-                closeAchievement.textContent = '？？ / んこ　2点';
+                closeAchievement.textContent = '？？ / んこ → 2点';
             }
         }
 
@@ -824,7 +804,7 @@
                         hasChinko = true;
                         updateAchievementDisplay();
                     }
-                    addScore(5, true); // ちんこで5点 + ポップアップ表示
+                    addScore(5); // ちんこで5点
                     showSpecialFlash();
                 }
                 // 惜しい文字列「ちん」や「んこ」が生成された場合の処理（部分文字列マッチ）
@@ -841,7 +821,7 @@
                         updateAchievementDisplay();
                     }
                     
-                    addScore(2, true); // ちん/んこで2点 + ポップアップ表示
+                    addScore(2); // ちん/んこで2点
                     showCloseFlash();
                 } else {
                     console.log('特別な文字列なし');
@@ -1040,9 +1020,9 @@
             hasChin = false;
             hasNko = false;
             hasChinko = false;
-            document.getElementById('closeAchievement').textContent = '？？ / ？？　2点';
+            document.getElementById('closeAchievement').textContent = '？？ / ？？ → 2点';
             document.getElementById('closeAchievement').style.display = 'block';
-            document.getElementById('specialAchievement').textContent = '？？？　5点';
+            document.getElementById('specialAchievement').textContent = '？？？ → 5点';
 
             // 最初の実行フラグをリセット
             isFirstRun = true;
