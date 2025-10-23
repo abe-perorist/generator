@@ -757,9 +757,8 @@
                     char.classList.remove('special-flash');
                 });
                 
-                // 元々動いていた場合は再開
-                if (wasRunning) {
-                    isRunning = true;
+                // 元々動いていた場合のみ再開（停止ボタンが押されていない場合）
+                if (wasRunning && isRunning) {
                     simulationInterval = setInterval(runShuffle, 500);
                 }
             }, 3000);
@@ -862,9 +861,8 @@
                     char.classList.remove('close-flash');
                 });
                 
-                // 元々動いていた場合は再開
-                if (wasRunning) {
-                    isRunning = true;
+                // 元々動いていた場合のみ再開（停止ボタンが押されていない場合）
+                if (wasRunning && isRunning) {
                     simulationInterval = setInterval(runShuffle, 500);
                 }
             }, 1200);
@@ -916,6 +914,7 @@
 
         // シミュレーション停止
         function stopSimulation() {
+            console.log('停止ボタンが押されました');
             isRunning = false;
             document.getElementById('startBtn').disabled = false;
             document.getElementById('stopBtn').disabled = true;
@@ -924,12 +923,24 @@
             if (simulationInterval) {
                 clearInterval(simulationInterval);
                 simulationInterval = null;
+                console.log('シミュレーションタイマーをクリアしました');
             }
             
             // 強調効果もクリア
             characterElements.forEach(char => {
                 char.classList.remove('special-flash', 'close-flash', 'success');
             });
+            
+            // 背景の演出もクリア
+            document.body.className = '';
+            
+            // 成功オーバーレイもクリア
+            const existingOverlay = document.querySelector('.chinco-success');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+            
+            console.log('シミュレーションが完全に停止しました');
         }
 
         // ページ読み込み時の初期化
