@@ -105,6 +105,30 @@
                 0 0 20px rgba(0, 255, 255, 0.5);
             position: relative;
             overflow: hidden;
+            text-align: center;
+        }
+
+        .achievement-display {
+            background: #000;
+            border: 2px solid #ff00ff;
+            border-radius: 0;
+            padding: 6px;
+            margin-bottom: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+            box-shadow: 
+                inset 0 0 20px rgba(255, 0, 255, 0.3),
+                0 0 20px rgba(255, 0, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .achievement-display div {
+            margin: 2px 0;
         }
 
         .counter::before {
@@ -607,7 +631,12 @@
         <h1>こっちのけんとジェネレーター</h1>
         
         <div class="counter">
-            得点: <span id="score">0</span> 点
+            <span id="score">0</span>点
+        </div>
+        
+        <div class="achievement-display" id="achievementDisplay">
+            <div id="closeAchievement">？？ / ？？　2点</div>
+            <div id="specialAchievement">？？？　5点</div>
         </div>
         
         <div class="character-display" id="characterDisplay">
@@ -631,6 +660,9 @@
         let simulationInterval = null;
         let characterElements = [];
         let isFirstRun = true;
+        let hasChin = false;  // 「ちん」を達成したか
+        let hasNko = false;   // 「んこ」を達成したか
+        let hasChinko = false; // 「ちんこ」を達成したか
 
         // 初期化
         function initializeDisplay() {
@@ -735,6 +767,30 @@
             }, 2000);
         }
 
+        // 達成状態を更新する関数
+        function updateAchievementDisplay() {
+            const closeAchievement = document.getElementById('closeAchievement');
+            const specialAchievement = document.getElementById('specialAchievement');
+            
+            // 「ちんこ」達成時
+            if (hasChinko) {
+                closeAchievement.style.display = 'none';
+                specialAchievement.textContent = 'ちんこ　5点';
+            }
+            // 「ちん」と「んこ」両方達成時
+            else if (hasChin && hasNko) {
+                closeAchievement.textContent = 'ちん / んこ　2点';
+            }
+            // 「ちん」のみ達成時
+            else if (hasChin) {
+                closeAchievement.textContent = 'ちん / ？？　2点';
+            }
+            // 「んこ」のみ達成時
+            else if (hasNko) {
+                closeAchievement.textContent = '？？ / んこ　2点';
+            }
+        }
+
         // シミュレーションのメイン処理
         function runShuffle() {
             if (!isRunning) return;
@@ -764,12 +820,27 @@
                 // 特別な文字列「ちんこ」が生成された場合の処理（部分文字列マッチ）
                 if (newString.includes("ちんこ")) {
                     console.log('「ちんこ」発見！+5点');
+                    if (!hasChinko) {
+                        hasChinko = true;
+                        updateAchievementDisplay();
+                    }
                     addScore(5, true); // ちんこで5点 + ポップアップ表示
                     showSpecialFlash();
                 }
                 // 惜しい文字列「ちん」や「んこ」が生成された場合の処理（部分文字列マッチ）
                 else if (newString.includes("ちん") || newString.includes("んこ")) {
                     console.log('「ちん」または「んこ」発見！+2点');
+                    
+                    // 「ちん」または「んこ」の達成状態を更新
+                    if (newString.includes("ちん") && !hasChin) {
+                        hasChin = true;
+                        updateAchievementDisplay();
+                    }
+                    if (newString.includes("んこ") && !hasNko) {
+                        hasNko = true;
+                        updateAchievementDisplay();
+                    }
+                    
                     addScore(2, true); // ちん/んこで2点 + ポップアップ表示
                     showCloseFlash();
                 } else {
@@ -964,6 +1035,14 @@
             // 得点をリセット
             score = 0;
             document.getElementById('score').textContent = score;
+
+            // 達成状態をリセット
+            hasChin = false;
+            hasNko = false;
+            hasChinko = false;
+            document.getElementById('closeAchievement').textContent = '？？ / ？？　2点';
+            document.getElementById('closeAchievement').style.display = 'block';
+            document.getElementById('specialAchievement').textContent = '？？？　5点';
 
             // 最初の実行フラグをリセット
             isFirstRun = true;
