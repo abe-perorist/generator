@@ -274,7 +274,7 @@
         </div>
         
         <div class="counter">
-            試行回数: <span id="attemptCount">0</span>
+            得点: <span id="score">0</span> 点
         </div>
         
         <div class="character-display" id="characterDisplay">
@@ -293,7 +293,7 @@
 
     <script>
         const targetString = "こっちのけんと";
-        let attemptCount = 0;
+        let score = 0;
         let isRunning = false;
         let simulationInterval = null;
         let characterElements = [];
@@ -361,12 +361,18 @@
             });
         }
 
+        // 得点を加算する関数
+        function addScore(points) {
+            score += points;
+            document.getElementById('score').textContent = score;
+        }
+
         // シミュレーションのメイン処理
         function runShuffle() {
             if (!isRunning) return;
 
-            attemptCount++;
-            document.getElementById('attemptCount').textContent = attemptCount;
+            // 1回施行するごとに1点
+            addScore(1);
 
             // 目標文字列を配列に変換してシャッフル
             const targetArray = targetString.split('');
@@ -387,10 +393,12 @@
             setTimeout(() => {
                 // 特別な文字列「ちんこ」が生成された場合の処理（部分文字列マッチ）
                 if (newString.includes("ちんこ")) {
+                    addScore(5); // ちんこで5点
                     showSpecialFlash();
                 }
                 // 惜しい文字列「ちん」や「んこ」が生成された場合の処理（部分文字列マッチ）
                 else if (newString.includes("ちん") || newString.includes("んこ")) {
+                    addScore(2); // ちん/んこで2点
                     showCloseFlash();
                 }
             }, delay);
@@ -494,11 +502,11 @@
             successMessage.style.display = 'block';
             successMessage.innerHTML = `
                 🎉 成功！目標文字列「こっちのけんと」を生成しました！ 🎉<br>
-                試行回数: ${attemptCount}回
+                最終得点: ${score}点
             `;
 
             // アラートでも通知
-            alert(`🎉 成功！\n目標文字列「こっちのけんと」を生成しました！\n試行回数: ${attemptCount}回`);
+            alert(`🎉 成功！\n目標文字列「こっちのけんと」を生成しました！\n最終得点: ${score}点`);
         }
 
         // シミュレーション開始
@@ -514,6 +522,10 @@
             characterElements.forEach(char => {
                 char.classList.remove('success', 'special-flash', 'close-flash');
             });
+
+            // 得点をリセット
+            score = 0;
+            document.getElementById('score').textContent = score;
 
             // 最初の実行フラグをリセット
             isFirstRun = true;
