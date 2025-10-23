@@ -402,6 +402,24 @@
             }
         }
 
+        .stats-display {
+            font-size: 0.85em;
+            color: #00ffff;
+            text-align: center;
+            line-height: 1.8;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .stats-display div {
+            margin: 3px 0;
+        }
+
+        .stats-highlight {
+            color: #ffff00;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ffff00;
+        }
+
         .score-popup {
             position: fixed;
             top: 20%;
@@ -682,6 +700,7 @@
         
         <div id="successMessage" class="success-message" style="display: none;">
             🎉 成功！「こっちのけんと」を生成しました！ 🎉
+            <div id="statsDisplay" class="stats-display" style="margin-top: 10px;"></div>
         </div>
     </div>
 
@@ -695,6 +714,8 @@
         let hasChin = false;  // 「ちん」を達成したか
         let hasNko = false;   // 「んこ」を達成したか
         let hasChinko = false; // 「ちんこ」を達成したか
+        let chinNkoCount = 0; // 「ちん / んこ」が揃った回数
+        let chinkoCount = 0;  // 「ちんこ」が揃った回数
 
         // 初期化
         function initializeDisplay() {
@@ -827,6 +848,7 @@
                 // 特別な文字列「ちんこ」が生成された場合の処理（部分文字列マッチ）
                 if (newString.includes("ちんこ")) {
                     console.log('「ちんこ」発見！+5点');
+                    chinkoCount++; // カウントを増やす
                     if (!hasChinko) {
                         hasChinko = true;
                         updateAchievementDisplay();
@@ -846,6 +868,11 @@
                     if (newString.includes("んこ") && !hasNko) {
                         hasNko = true;
                         updateAchievementDisplay();
+                    }
+                    
+                    // 「ちん」と「んこ」両方揃った場合のみカウント
+                    if (hasChin && hasNko) {
+                        chinNkoCount++; // カウントを増やす
                     }
                     
                     addScore(2); // ちん/んこで2点
@@ -1016,13 +1043,39 @@
             // 成功メッセージを表示
             const successMessage = document.getElementById('successMessage');
             successMessage.style.display = 'block';
+            
+            // 統計情報を作成
+            let statsHTML = '';
+            if (chinNkoCount > 0 || chinkoCount > 0) {
+                statsHTML = '<div class="stats-display">';
+                statsHTML += '<div>━━━ 達成記録 ━━━</div>';
+                if (chinNkoCount > 0) {
+                    statsHTML += `<div>ちん / んこ: <span class="stats-highlight">${chinNkoCount}回</span></div>`;
+                }
+                if (chinkoCount > 0) {
+                    statsHTML += `<div>ちんこ: <span class="stats-highlight">${chinkoCount}回</span></div>`;
+                }
+                statsHTML += '</div>';
+            }
+            
             successMessage.innerHTML = `
                 🎉 成功！目標文字列「こっちのけんと」を生成しました！ 🎉<br>
                 最終得点: ${score}点
+                ${statsHTML}
             `;
 
-            // アラートでも通知
-            alert(`🎉 成功！\n目標文字列「こっちのけんと」を生成しました！\n最終得点: ${score}点`);
+            // アラートでも通知（統計付き）
+            let alertMessage = `🎉 成功！\n目標文字列「こっちのけんと」を生成しました！\n最終得点: ${score}点`;
+            if (chinNkoCount > 0 || chinkoCount > 0) {
+                alertMessage += '\n\n━━━ 達成記録 ━━━';
+                if (chinNkoCount > 0) {
+                    alertMessage += `\nちん / んこ: ${chinNkoCount}回`;
+                }
+                if (chinkoCount > 0) {
+                    alertMessage += `\nちんこ: ${chinkoCount}回`;
+                }
+            }
+            alert(alertMessage);
         }
 
         // シミュレーション開始
@@ -1047,6 +1100,8 @@
             hasChin = false;
             hasNko = false;
             hasChinko = false;
+            chinNkoCount = 0; // カウントをリセット
+            chinkoCount = 0;  // カウントをリセット
             document.getElementById('closeAchievement').textContent = '？？ / ？？ → 2点';
             document.getElementById('closeAchievement').style.display = 'block';
             document.getElementById('specialAchievement').textContent = '？？？ → 5点';
