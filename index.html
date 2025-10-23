@@ -756,8 +756,11 @@
             
             // 「ちんこ」達成時
             if (hasChinko) {
-                closeAchievement.style.display = 'none';
                 specialAchievement.textContent = 'ちんこ → 5点';
+                // 「ちん」と「んこ」両方達成済みの場合は表示を保持
+                if (hasChin && hasNko) {
+                    closeAchievement.textContent = 'ちん / んこ → 2点';
+                }
             }
             // 「ちん」と「んこ」両方達成時
             else if (hasChin && hasNko) {
