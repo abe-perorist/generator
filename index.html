@@ -262,6 +262,64 @@
             color: #1976d2;
             font-weight: bold;
         }
+
+        .score-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #d32f2f;
+            font-size: 3em;
+            font-weight: bold;
+            padding: 20px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+            z-index: 1000;
+            animation: scorePopup 2s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes scorePopup {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            40% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            80% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+        }
+
+        .score-highlight {
+            animation: scoreHighlight 0.8s ease-out;
+        }
+
+        @keyframes scoreHighlight {
+            0% {
+                transform: scale(1);
+                color: #333;
+            }
+            50% {
+                transform: scale(1.3);
+                color: #ff6b35;
+            }
+            100% {
+                transform: scale(1);
+                color: #333;
+            }
+        }
     </style>
 </head>
 <body>
@@ -362,9 +420,36 @@
         }
 
         // 得点を加算する関数
-        function addScore(points) {
+        function addScore(points, showPopup = false) {
             score += points;
             document.getElementById('score').textContent = score;
+            
+            // 得点表示の強調効果
+            const scoreElement = document.getElementById('score');
+            scoreElement.classList.add('score-highlight');
+            setTimeout(() => {
+                scoreElement.classList.remove('score-highlight');
+            }, 800);
+            
+            // ポップアップ表示（ボーナス得点の場合）
+            if (showPopup) {
+                showScorePopup(points);
+            }
+        }
+
+        // 得点ポップアップを表示する関数
+        function showScorePopup(points) {
+            const popup = document.createElement('div');
+            popup.className = 'score-popup';
+            popup.textContent = `+${points}点！`;
+            document.body.appendChild(popup);
+            
+            // 2秒後にポップアップを削除
+            setTimeout(() => {
+                if (popup.parentNode) {
+                    popup.parentNode.removeChild(popup);
+                }
+            }, 2000);
         }
 
         // シミュレーションのメイン処理
@@ -393,12 +478,12 @@
             setTimeout(() => {
                 // 特別な文字列「ちんこ」が生成された場合の処理（部分文字列マッチ）
                 if (newString.includes("ちんこ")) {
-                    addScore(5); // ちんこで5点
+                    addScore(5, true); // ちんこで5点 + ポップアップ表示
                     showSpecialFlash();
                 }
                 // 惜しい文字列「ちん」や「んこ」が生成された場合の処理（部分文字列マッチ）
                 else if (newString.includes("ちん") || newString.includes("んこ")) {
-                    addScore(2); // ちん/んこで2点
+                    addScore(2, true); // ちん/んこで2点 + ポップアップ表示
                     showCloseFlash();
                 }
             }, delay);
