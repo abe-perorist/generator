@@ -581,19 +581,41 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 8em;
+            font-size: 6em;
             font-weight: 900;
-            color: #ff0000;
+            color: #ffff00;
             text-shadow: 
-                5px 5px 0 #00ff00,
-                -5px -5px 0 #0000ff,
-                10px 10px 0 #ffff00,
-                -10px -10px 0 #ff00ff,
-                15px 15px 0 #00ffff,
-                -15px -15px 0 #ff8000;
+                5px 5px 0 #ff00ff,
+                -5px -5px 0 #00ffff,
+                10px 10px 0 #ff00ff,
+                -10px -10px 0 #00ffff,
+                0 0 30px #ffff00,
+                0 0 60px #ffff00;
             animation: chincoShake 0.1s linear infinite;
             font-family: 'Orbitron', monospace;
             letter-spacing: 10px;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        .chinco-text::before {
+            content: '🎰 BIG WIN! 🎰';
+            display: block;
+            font-size: 0.4em;
+            color: #00ffff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px #00ffff;
+            animation: none;
+        }
+        
+        .chinco-text::after {
+            content: '★ JACKPOT ★';
+            display: block;
+            font-size: 0.5em;
+            color: #ff00ff;
+            margin-top: 10px;
+            text-shadow: 0 0 20px #ff00ff;
+            animation: none;
         }
 
         @keyframes chincoShake {
@@ -902,10 +924,10 @@
                 document.body.className = originalBodyClass;
             }, 2000);
 
-            // 巨大な「ちんこ成立！」テキスト
+            // 巨大な「ちんこ」スロット演出テキスト
             const successOverlay = document.createElement('div');
             successOverlay.className = 'chinco-success';
-            successOverlay.innerHTML = '<div class="chinco-text">ちんこ成立！</div>';
+            successOverlay.innerHTML = '<div class="chinco-text">ちんこ</div>';
             document.body.appendChild(successOverlay);
 
             // 爆発的に飛び散るアイコン
