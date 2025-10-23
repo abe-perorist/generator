@@ -456,9 +456,6 @@
         function runShuffle() {
             if (!isRunning) return;
 
-            // 1回施行するごとに1点
-            addScore(1);
-
             // 目標文字列を配列に変換してシャッフル
             const targetArray = targetString.split('');
             const shuffledArray = shuffleArray(targetArray);
@@ -480,6 +477,9 @@
             setTimeout(() => {
                 // デバッグ用: 現在の文字列をコンソールに出力
                 console.log('判定対象文字列:', newString);
+                
+                // 1回施行するごとに1点（判定と同時に加算）
+                addScore(1);
                 
                 // 特別な文字列「ちんこ」が生成された場合の処理（部分文字列マッチ）
                 if (newString.includes("ちんこ")) {
