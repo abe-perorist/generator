@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎰 こっちのけんと 🎰</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
         
@@ -420,6 +421,45 @@
             text-shadow: 0 0 10px #ffff00;
         }
 
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            background: #000;
+            color: #ff00ff;
+            border: 2px solid #ff00ff;
+            padding: 8px 16px;
+            font-size: 0.85em;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 
+                0 0 20px rgba(255, 0, 255, 0.5),
+                inset 0 0 20px rgba(255, 0, 255, 0.1);
+            text-shadow: 0 0 10px #ff00ff;
+        }
+
+        .share-btn:hover {
+            background: #ff00ff;
+            color: #000;
+            box-shadow: 
+                0 0 30px #ff00ff,
+                inset 0 0 30px rgba(255, 0, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .share-btn:active {
+            transform: scale(0.95);
+            box-shadow: 
+                inset 0 0 20px rgba(255, 0, 255, 0.5),
+                0 0 10px #ff00ff;
+        }
+
         .score-popup {
             position: fixed;
             top: 20%;
@@ -701,6 +741,10 @@
         <div id="successMessage" class="success-message" style="display: none;">
             🎉 成功！「こっちのけんと」を生成しました！ 🎉
             <div id="statsDisplay" class="stats-display" style="margin-top: 10px;"></div>
+            <div class="share-buttons" style="margin-top: 15px;">
+                <button id="saveImageBtn" onclick="saveAsImage()" class="share-btn">📸 画像で保存</button>
+                <button id="shareTwitterBtn" onclick="shareToTwitter()" class="share-btn">🐦 Twitterでシェア</button>
+            </div>
         </div>
     </div>
 
@@ -1142,6 +1186,67 @@
             }
             
             console.log('シミュレーションが完全に停止しました');
+        }
+
+        // 画像として保存する機能
+        async function saveAsImage() {
+            try {
+                // キャプチャする領域を作成（画面全体をキャプチャ）
+                const container = document.querySelector('.container');
+                
+                // html2canvasでキャプチャ
+                const canvas = await html2canvas(container, {
+                    backgroundColor: '#111111',
+                    scale: 2, // 高解像度
+                    logging: false,
+                    useCORS: true
+                });
+                
+                // Canvasを画像に変換してダウンロード
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                    link.download = `こっちのけんと_${timestamp}.png`;
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    
+                    alert('📸 画像を保存しました！');
+                });
+            } catch (error) {
+                console.error('画像保存エラー:', error);
+                alert('❌ 画像の保存に失敗しました。もう一度お試しください。');
+            }
+        }
+        
+        // Twitterでシェアする機能
+        function shareToTwitter() {
+            // シェア用テキストを作成
+            let tweetText = `🎰 こっちのけんとスロット 🎰\n\n`;
+            tweetText += `✨ 「こっちのけんと」を生成しました！\n`;
+            tweetText += `🎯 最終得点: ${score}点\n`;
+            
+            // 統計情報を追加
+            if (chinNkoCount > 0 || chinkoCount > 0) {
+                tweetText += `\n📊 達成記録:\n`;
+                if (chinNkoCount > 0) {
+                    tweetText += `・ちん / んこ: ${chinNkoCount}回\n`;
+                }
+                if (chinkoCount > 0) {
+                    tweetText += `・ちんこ: ${chinkoCount}回\n`;
+                }
+            }
+            
+            // URLを追加（実際のURLに置き換えてください）
+            const currentUrl = window.location.href;
+            tweetText += `\n${currentUrl}`;
+            
+            // Twitterのシェア用URLを作成
+            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+            
+            // 新しいウィンドウで開く
+            window.open(twitterUrl, '_blank', 'width=550,height=420');
         }
 
         // ページ読み込み時の初期化
