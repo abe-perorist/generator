@@ -1209,7 +1209,7 @@
                 }
             }
 
-            // 1.2秒後に光る効果を削除し、シミュレーションを再開
+            // 0.6秒後に光る効果を削除し、シミュレーションを再開
             setTimeout(() => {
                 characterElements.forEach(char => {
                     char.classList.remove('close-flash');
@@ -1219,7 +1219,7 @@
                 if (wasRunning && isRunning) {
                     simulationInterval = setInterval(runShuffle, 500);
                 }
-            }, 1200);
+            }, 600);
         }
 
         // 成功時の表示
