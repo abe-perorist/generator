@@ -265,7 +265,7 @@
 
         .score-popup {
             position: fixed;
-            top: 50%;
+            top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: linear-gradient(45deg, #ffd700, #ffed4e);
@@ -424,12 +424,14 @@
             score += points;
             document.getElementById('score').textContent = score;
             
-            // 得点表示の強調効果
-            const scoreElement = document.getElementById('score');
-            scoreElement.classList.add('score-highlight');
-            setTimeout(() => {
-                scoreElement.classList.remove('score-highlight');
-            }, 800);
+            // 得点表示の強調効果（基本得点のみ）
+            if (!showPopup) {
+                const scoreElement = document.getElementById('score');
+                scoreElement.classList.add('score-highlight');
+                setTimeout(() => {
+                    scoreElement.classList.remove('score-highlight');
+                }, 800);
+            }
             
             // ポップアップ表示（ボーナス得点の場合）
             if (showPopup) {
