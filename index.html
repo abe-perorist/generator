@@ -462,6 +462,97 @@
             0% { transform: translateY(0); }
             100% { transform: translateY(-100px); }
         }
+
+        /* ちんこ成立時の超チープ演出 */
+        .chinco-success {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .rainbow-background {
+            background: 
+                linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080);
+            background-size: 200% 200%;
+            animation: rainbowFlash 0.1s linear infinite;
+        }
+
+        @keyframes rainbowFlash {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .checkerboard-background {
+            background: 
+                repeating-conic-gradient(#ff0000 0deg 90deg, #00ff00 90deg 180deg, #0000ff 180deg 270deg, #ffff00 270deg 360deg);
+            background-size: 50px 50px;
+            animation: checkerboardSpin 0.2s linear infinite;
+        }
+
+        @keyframes checkerboardSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chinco-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8em;
+            font-weight: 900;
+            color: #ff0000;
+            text-shadow: 
+                5px 5px 0 #00ff00,
+                -5px -5px 0 #0000ff,
+                10px 10px 0 #ffff00,
+                -10px -10px 0 #ff00ff,
+                15px 15px 0 #00ffff,
+                -15px -15px 0 #ff8000;
+            animation: chincoShake 0.1s linear infinite;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 10px;
+        }
+
+        @keyframes chincoShake {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+            25% { transform: translate(-50%, -50%) rotate(2deg) scale(1.1); }
+            50% { transform: translate(-50%, -50%) rotate(-2deg) scale(0.9); }
+            75% { transform: translate(-50%, -50%) rotate(1deg) scale(1.05); }
+        }
+
+        .explosion-icon {
+            position: absolute;
+            font-size: 3em;
+            animation: explosionBurst 2s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes explosionBurst {
+            0% {
+                opacity: 1;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.5) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2) rotate(360deg);
+            }
+        }
+
+        .poop-icon { color: #8B4513; }
+        .banana-icon { color: #FFD700; }
+        .fire-icon { color: #FF4500; }
+        .heart-icon { color: #FF69B4; }
+        .star-icon { color: #FFD700; }
+        .diamond-icon { color: #00FFFF; }
     </style>
 </head>
 <body>
@@ -664,7 +755,10 @@
                 }
             }
 
-            // 1.5秒後に光る効果を削除し、シミュレーションを再開
+            // 超チープな「ちんこ成立！」演出を開始
+            showChincoSuccess();
+
+            // 3秒後に光る効果を削除し、シミュレーションを再開
             setTimeout(() => {
                 characterElements.forEach(char => {
                     char.classList.remove('special-flash');
@@ -675,7 +769,68 @@
                     isRunning = true;
                     simulationInterval = setInterval(runShuffle, 500);
                 }
+            }, 3000);
+        }
+
+        // 超チープな「ちんこ成立！」演出
+        function showChincoSuccess() {
+            // 背景の急変（レインボーとチェッカーボードを交互に）
+            const originalBodyClass = document.body.className;
+            document.body.className = 'rainbow-background';
+            
+            setTimeout(() => {
+                document.body.className = 'checkerboard-background';
+            }, 500);
+            
+            setTimeout(() => {
+                document.body.className = 'rainbow-background';
+            }, 1000);
+            
+            setTimeout(() => {
+                document.body.className = 'checkerboard-background';
             }, 1500);
+            
+            setTimeout(() => {
+                document.body.className = originalBodyClass;
+            }, 2000);
+
+            // 巨大な「ちんこ成立！」テキスト
+            const successOverlay = document.createElement('div');
+            successOverlay.className = 'chinco-success';
+            successOverlay.innerHTML = '<div class="chinco-text">ちんこ成立！</div>';
+            document.body.appendChild(successOverlay);
+
+            // 爆発的に飛び散るアイコン
+            const icons = ['💩', '🍌', '🔥', '💖', '⭐', '💎'];
+            const colors = ['poop-icon', 'banana-icon', 'fire-icon', 'heart-icon', 'star-icon', 'diamond-icon'];
+            
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const icon = document.createElement('div');
+                    icon.className = `explosion-icon ${colors[Math.floor(Math.random() * colors.length)]}`;
+                    icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+                    
+                    // ランダムな位置に配置
+                    icon.style.left = Math.random() * 100 + '%';
+                    icon.style.top = Math.random() * 100 + '%';
+                    
+                    successOverlay.appendChild(icon);
+                    
+                    // 2秒後にアイコンを削除
+                    setTimeout(() => {
+                        if (icon.parentNode) {
+                            icon.parentNode.removeChild(icon);
+                        }
+                    }, 2000);
+                }, i * 100);
+            }
+
+            // 3秒後にオーバーレイを削除
+            setTimeout(() => {
+                if (successOverlay.parentNode) {
+                    successOverlay.parentNode.removeChild(successOverlay);
+                }
+            }, 3000);
         }
 
         // 惜しい文字列「ちん」や「んこ」が生成された時の弱めの光る効果
