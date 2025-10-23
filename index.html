@@ -464,6 +464,9 @@
             const shuffledArray = shuffleArray(targetArray);
             const newString = shuffledArray.join('');
 
+            // 判定の遅延時間を先に計算
+            const delay = isFirstRun ? 500 : 0;
+            
             // 最初の実行時のみアニメーション効果付きで文字を更新
             if (isFirstRun) {
                 animateCharacters(newString);
@@ -474,17 +477,23 @@
             }
 
             // 判定を実行（最初の実行時は500ms後、それ以降は即座に）
-            const delay = isFirstRun ? 500 : 0;
             setTimeout(() => {
+                // デバッグ用: 現在の文字列をコンソールに出力
+                console.log('判定対象文字列:', newString);
+                
                 // 特別な文字列「ちんこ」が生成された場合の処理（部分文字列マッチ）
                 if (newString.includes("ちんこ")) {
+                    console.log('「ちんこ」発見！+5点');
                     addScore(5, true); // ちんこで5点 + ポップアップ表示
                     showSpecialFlash();
                 }
                 // 惜しい文字列「ちん」や「んこ」が生成された場合の処理（部分文字列マッチ）
                 else if (newString.includes("ちん") || newString.includes("んこ")) {
+                    console.log('「ちん」または「んこ」発見！+2点');
                     addScore(2, true); // ちん/んこで2点 + ポップアップ表示
                     showCloseFlash();
+                } else {
+                    console.log('特別な文字列なし');
                 }
             }, delay);
 
