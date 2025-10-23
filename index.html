@@ -377,19 +377,8 @@
         }
 
         .success-message {
-            background: #000;
-            color: #ffff00;
-            border: 2px solid #ffff00;
-            border-radius: 0;
-            padding: 10px;
             margin-top: 10px;
-            font-size: 1em;
-            font-weight: bold;
             animation: slideIn 0.5s ease-out;
-            box-shadow: 
-                0 0 20px rgba(255, 255, 0, 0.5),
-                inset 0 0 20px rgba(255, 255, 0, 0.1);
-            text-shadow: 0 0 10px #ffff00;
         }
 
         @keyframes slideIn {
@@ -419,6 +408,54 @@
             color: #ffff00;
             font-weight: bold;
             text-shadow: 0 0 10px #ffff00;
+        }
+
+        .success-stats {
+            text-align: center;
+            animation: successPulse 1s ease-in-out;
+        }
+
+        .success-title {
+            font-size: 1.2em;
+            color: #ffff00;
+            font-weight: bold;
+            text-shadow: 0 0 20px #ffff00;
+            margin-bottom: 10px;
+            animation: glitchText 0.3s ease-in-out 3;
+        }
+
+        .final-score {
+            font-size: 2.5em;
+            color: #ffff00;
+            font-weight: bold;
+            text-shadow: 
+                0 0 20px #ffff00,
+                0 0 40px #ffff00,
+                0 0 60px #ffff00;
+            margin: 10px 0;
+        }
+
+        .stats-separator {
+            color: #00ffff;
+            font-size: 0.85em;
+            margin: 10px 0 5px 0;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .stats-item {
+            color: #00ffff;
+            font-size: 0.9em;
+            margin: 5px 0;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        @keyframes successPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         .share-buttons {
@@ -1084,32 +1121,39 @@
                 char.classList.add('success');
             });
 
-            // 成功メッセージを表示
-            const successMessage = document.getElementById('successMessage');
-            successMessage.style.display = 'block';
+            // 得点エリアを成功表示に変更
+            const scoreAchievementBox = document.querySelector('.score-achievement-box');
             
             // 統計情報を作成
-            let statsHTML = '';
+            let statsHTML = '<div class="success-stats">';
+            statsHTML += '<div class="success-title">🎉 「こっちのけんと」 🎉</div>';
+            statsHTML += `<div class="final-score">${score}点</div>`;
+            
             if (chinNkoCount > 0 || chinkoCount > 0) {
-                statsHTML = '<div class="stats-display">';
-                statsHTML += '<div>━━━ 達成記録 ━━━</div>';
+                statsHTML += '<div class="stats-separator">━━━ 達成記録 ━━━</div>';
                 if (chinNkoCount > 0) {
-                    statsHTML += `<div>ちん / んこ: <span class="stats-highlight">${chinNkoCount}回</span></div>`;
+                    statsHTML += `<div class="stats-item">ちん / んこ: <span class="stats-highlight">${chinNkoCount}回</span></div>`;
                 }
                 if (chinkoCount > 0) {
-                    statsHTML += `<div>ちんこ: <span class="stats-highlight">${chinkoCount}回</span></div>`;
+                    statsHTML += `<div class="stats-item">ちんこ: <span class="stats-highlight">${chinkoCount}回</span></div>`;
                 }
-                statsHTML += '</div>';
             }
+            statsHTML += '</div>';
             
+            scoreAchievementBox.innerHTML = statsHTML;
+            
+            // 成功メッセージ下部のボタンエリアを表示
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
             successMessage.innerHTML = `
-                🎉 成功！目標文字列「こっちのけんと」を生成しました！ 🎉<br>
-                最終得点: ${score}点
-                ${statsHTML}
+                <div class="share-buttons" style="margin-top: 0;">
+                    <button id="saveImageBtn" onclick="saveAsImage()" class="share-btn">📸 画像で保存</button>
+                    <button id="shareTwitterBtn" onclick="shareToTwitter()" class="share-btn">🐦 Twitterでシェア</button>
+                </div>
             `;
 
             // アラートでも通知（統計付き）
-            let alertMessage = `🎉 成功！\n目標文字列「こっちのけんと」を生成しました！\n最終得点: ${score}点`;
+            let alertMessage = `🎉 成功！\n「こっちのけんと」を生成しました！\n最終得点: ${score}点`;
             if (chinNkoCount > 0 || chinkoCount > 0) {
                 alertMessage += '\n\n━━━ 達成記録 ━━━';
                 if (chinNkoCount > 0) {
@@ -1136,9 +1180,22 @@
                 char.classList.remove('success', 'special-flash', 'close-flash');
             });
 
+            // 得点エリアを元の状態に戻す
+            const scoreAchievementBox = document.querySelector('.score-achievement-box');
+            scoreAchievementBox.innerHTML = `
+                <div class="score-display">
+                    <span id="score">0</span>点
+                </div>
+                <div class="score-label">────────</div>
+                <div class="achievement-display" id="achievementDisplay">
+                    <div class="achievement-label">🎰 役と配当 🎰</div>
+                    <div id="closeAchievement">？？ / ？？ → 2点</div>
+                    <div id="specialAchievement">？？？ → 5点</div>
+                </div>
+            `;
+            
             // 得点をリセット
             score = 0;
-            document.getElementById('score').textContent = score;
 
             // 達成状態をリセット
             hasChin = false;
@@ -1146,9 +1203,6 @@
             hasChinko = false;
             chinNkoCount = 0; // カウントをリセット
             chinkoCount = 0;  // カウントをリセット
-            document.getElementById('closeAchievement').textContent = '？？ / ？？ → 2点';
-            document.getElementById('closeAchievement').style.display = 'block';
-            document.getElementById('specialAchievement').textContent = '？？？ → 5点';
 
             // 最初の実行フラグをリセット
             isFirstRun = true;
