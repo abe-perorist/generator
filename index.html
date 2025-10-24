@@ -91,6 +91,37 @@
             80% { transform: translateX(1px); }
         }
 
+        .warning-message {
+            color: #ff00ff;
+            font-size: 0.75em;
+            font-family: 'Share Tech Mono', monospace;
+            text-align: center;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid #ff00ff;
+            box-shadow: 
+                0 0 10px rgba(255, 0, 255, 0.3),
+                inset 0 0 10px rgba(255, 0, 255, 0.1);
+            text-shadow: 0 0 5px #ff00ff;
+            animation: warningPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { 
+                opacity: 0.8;
+                box-shadow: 
+                    0 0 10px rgba(255, 0, 255, 0.3),
+                    inset 0 0 10px rgba(255, 0, 255, 0.1);
+            }
+            50% { 
+                opacity: 1;
+                box-shadow: 
+                    0 0 20px rgba(255, 0, 255, 0.5),
+                    inset 0 0 15px rgba(255, 0, 255, 0.2);
+            }
+        }
+
         .score-achievement-box {
             background: #000;
             border: 2px solid #00ffff;
@@ -849,6 +880,7 @@
 <body>
     <div class="container">
         <h1>🎰 こっちのけんと 🎰</h1>
+        <div class="warning-message">【注意】このスロットは、「こっちのけんと」が揃うまで止まらない！</div>
         
         <div class="score-achievement-box">
             <div class="score-display">
